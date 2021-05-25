@@ -5,11 +5,7 @@ from subprocess import PIPE, Popen
 from setuptools import Extension, setup
 
 package_name = 'kyotocabinet'
-
-minor_version = open('VERSION').read().strip()
-build_number = os.environ.get('BUILD_NUM', 'UNKNOWN')
-VERSION = f'{minor_version}.{build_number}'
-
+package_version = '1.11'
 package_description = 'a straightforward implementation of DBM'
 package_author = 'FAL Labs'
 package_author_email = 'info@fallabs.com'
@@ -67,7 +63,7 @@ module = Extension(module_name,
 
 setup(
     name=package_name,
-    version=VERSION,
+    version=package_version,
     description=package_description,
     author=package_author,
     author_email=package_author_email,
