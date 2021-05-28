@@ -97,7 +97,8 @@ docclean :
 
 
 build :
-	BUILD_NUM=${BUILD_NUM} $(PYTHON) setup.py sdist
+	$(PIP) install wheel
+	BUILD_NUM=${BUILD_NUM} $(PYTHON) setup.py build bdist_wheel
 
 
 publish :
