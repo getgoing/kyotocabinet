@@ -20,6 +20,7 @@ INSTALL_DEPENDENCIES = [
     'libkyotocabinet-dev',
 ]
 RUNTIME_DEPENDENCIES = [
+    'kyotocabinet-utils',
     'libkyotocabinet-dev',
     'make',
 ]
