@@ -58,6 +58,7 @@ application-package-names = []
 exclude = ["tests/*"]
 import-order-style = "edited"
 max-complexity = 22
+max-line-length = 88
 
 [tool.flakeheaven.plugins]
 pyflakes = ["+*"]
@@ -78,7 +79,7 @@ ensure_newline_before_comments = true
 force_grid_wrap = 0
 include_trailing_comma = true
 known_application_imports = ['kyotocabinet']
-line_length = 79
+line_length = 88
 lines_after_imports = 2
 lines_between_types = 1
 multi_line_output = 3
@@ -90,7 +91,6 @@ use_parentheses = true
 [tool.black]
 exclude = '(/snapshots/)'
 include = '(\.py$)'
-line-length = 79
 target-version = ['py39']
 skip-string-normalization = true
 safe = true
