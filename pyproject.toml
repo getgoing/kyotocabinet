@@ -58,7 +58,7 @@ application-package-names = []
 exclude = ["tests/*"]
 import-order-style = "edited"
 max-complexity = 22
-max_line_length = 88
+max-line-length = 88
 
 [tool.flakeheaven.plugins]
 pyflakes = ["+*"]
