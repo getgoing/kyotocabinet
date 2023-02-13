@@ -27,7 +27,7 @@ RUNTIME_DEPENDENCIES = [
 WORKSPACE_PATH = '/drone/src'
 POETRY_CACHE_DIR = WORKSPACE_PATH + '/.poetry_cache'
 POETRY_HOME = WORKSPACE_PATH + '/.poetry'
-POETRY_VERSION = '1.1.13'
+POETRY_VERSION = '1.3.2'
 
 
 def main(ctx):
@@ -73,8 +73,9 @@ def install():
         'commands': [
             'apt update',
             'apt install -y ' + ' '.join(INSTALL_DEPENDENCIES),
-            'curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python',
-            '. $POETRY_HOME/env && make install',
+            'curl -sSL https://install.python-poetry.org | python -',
+            'export PATH="$POETRY_HOME/bin:$PATH"',
+            'make install',
         ],
         'environment': {
             'POETRY_CACHE_DIR': POETRY_CACHE_DIR,
@@ -91,7 +92,7 @@ def docker_run(name, commands):
         'commands': [
             'apt update',
             'apt install -y ' + ' '.join(RUNTIME_DEPENDENCIES),
-            '. $POETRY_HOME/env',
+            'export PATH="$POETRY_HOME/bin:$PATH"',
             '. `poetry env info -p`/bin/activate',
         ] + commands,
         'environment': {
@@ -156,11 +157,15 @@ def publish():
             'export BUILD_NUM=$(cat build_num)',
             'apt update',
             'apt install -y ' +  ' '.join(INSTALL_DEPENDENCIES),
-            'curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python',
-            '. $HOME/.poetry/env && make build',
-            '. $HOME/.poetry/env && make publish',
+            'curl -sSL https://install.python-poetry.org | python -',
+            'export PATH="$POETRY_HOME/bin:$PATH"',
+            'make build',
+            'make publish',
         ],
         'environment': {
+            'POETRY_CACHE_DIR': POETRY_CACHE_DIR,
+            'POETRY_HOME': POETRY_HOME,
+            'POETRY_VERSION': POETRY_VERSION,
             'PYPI_USERNAME': {'from_secret': 'pypi_username'},
             'PYPI_PASSWORD': {'from_secret': 'pypi_password'},
             'PYPI_URL': {'from_secret': 'pypi_url'},
