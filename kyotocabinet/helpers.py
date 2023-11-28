@@ -22,9 +22,7 @@ COMPRESSORS = {
     None: (lambda item: item, lambda item: item),
     'lz4': (compress, decompress),
 }
-SERIALIZERS = {
-    'msgpack': (msgpack.dumps, partial(msgpack.loads, strict_map_key=False))
-}
+SERIALIZERS = {'msgpack': (msgpack.dumps, partial(msgpack.loads, strict_map_key=False))}
 
 
 class KyotoCabinetClient(object):
@@ -118,9 +116,7 @@ class KyotoCabinetClient(object):
         """Get connection to one DB."""
         if not self._connection_pool:
             assert self.path.endswith('kch')
-            self._connection_pool = KyotoCabinetDict(
-                self.path, **self._options
-            )
+            self._connection_pool = KyotoCabinetDict(self.path, **self._options)
         return self._connection_pool
 
     def get_connection_splitted(self, key, prefix=None):
@@ -128,9 +124,7 @@ class KyotoCabinetClient(object):
         prefix = key.rsplit(':', 1)[0] if prefix is None else prefix
         if prefix not in self._connection_pool:
             file_name = '{0}.kch'.format(os.path.join(self.path, prefix))
-            self._connection_pool[prefix] = KyotoCabinetDict(
-                file_name, **self._options
-            )
+            self._connection_pool[prefix] = KyotoCabinetDict(file_name, **self._options)
         return self._connection_pool[prefix]
 
     def get(self, key):
@@ -153,9 +147,7 @@ class KyotoCabinetClient(object):
         if key_prefix:
             key_prefix = '{0}:'.format(key_prefix.rstrip(':'))
             connection = self.get_connection(key_prefix)
-            mapped_keys = {
-                '{0}{1}'.format(key_prefix, key): key for key in keys
-            }
+            mapped_keys = {'{0}{1}'.format(key_prefix, key): key for key in keys}
             for key in mapped_keys:
                 value = connection.get(smart_str(key))
                 if value is not None:
@@ -300,9 +292,7 @@ class KyotoCabinetDict(MutableMapping):
 
         if not result:
             raise RuntimeError(
-                'Failed to open kyoto file: {0} Error: {1}'.format(
-                    path, db.error()
-                )
+                'Failed to open kyoto file: {0} Error: {1}'.format(path, db.error())
             )
         if not read_only:
             KyotoCabinetDict._opened_in_write_mode.add(path)
@@ -328,9 +318,7 @@ class KyotoCabinetDict(MutableMapping):
         raise KeyError(key)
 
     def __iter__(self):
-        return green_iter(
-            iter(item.decode('utf-8') for item in self._db.__iter__())
-        )
+        return green_iter(iter(item.decode('utf-8') for item in self._db.__iter__()))
 
     def __len__(self):
         return self._db.__len__()
