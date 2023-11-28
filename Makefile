@@ -3,13 +3,21 @@ VERSION = $(shell cat VERSION)
 BUILD_NUM ?= 0
 
 PYTHON = python3
+POETRY = poetry
 RUNENV = LD_LIBRARY_PATH=.:/lib:/usr/lib:/usr/local/lib:$(HOME)/lib
 
 install: clean
-	@poetry install
+	$(POETRY) install
+
+setup_package_version:
+	if [ -z "$(DEBUG)" ] ; then \
+		$(POETRY) version "$(VERSION).$(BUILD_NUM)+$(GIT_COMMIT_SHA)" \
+    ; else \
+		$(POETRY) version "$(VERSION).$(BUILD_NUM)+$(DEBUG)-$(GIT_COMMIT_SHA)" \
+	; fi
 
 update: clean
-	@poetry update
+	$(POETRY) update
 
 clean :
 	rm -rf casket casket* *.kcss *.so *.pyc build dist hoge moge tako ika
@@ -20,20 +28,26 @@ hooks:
 	pre-commit install --hook-type pre-commit --hook-type pre-push
 
 pep8 flake:
-	@poetry run flakeheaven lint $(PROJECT)
+	$(POETRY) run flakeheaven lint $(PROJECT)
 
-test: build
-	@poetry run pytest tests/
+isort_check:
+	$(POETRY) run isort --check --diff $(PROJECT)
 
-static-checks: pep8
+black_check:
+	$(POETRY) run black --check $(PROJECT)
+
+test_unit: build
+	$(POETRY) run pytest tests/
+
+static_checks: pep8 isort_check black_check
 
 build:
-	@poetry version "${VERSION}.${BUILD_NUM}"
-	@poetry build -f wheel -n
+	$(POETRY) version "${VERSION}.${BUILD_NUM}"
+	$(POETRY) build -f wheel -n
 
 publish:
-	@poetry config repositories.bcd ${PYPI_URL}
-	@poetry publish -r bcd -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}
+	$(POETRY) config repositories.bcd ${PYPI_URL}
+	$(POETRY) publish -r bcd -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}
 
 check: build
 	$(MAKE) DBNAME=":" RNUM="10000" check-each
@@ -83,5 +97,6 @@ doc: docclean
 docclean:
 	rm -rf doc
 
-.PHONY: install update clean pep8 hooks test static-checks build publish \
-	check check-each check-forever doc docclean
+.PHONY: install update clean hooks build publish setup_package_version \
+	check check-each check-forever doc docclean \
+	pep8 isort_check black_check static_checks test_unit
