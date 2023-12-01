@@ -16,6 +16,14 @@ setup_package_version:
 		$(POETRY) version "$(VERSION).$(BUILD_NUM)+$(DEBUG)-$(GIT_COMMIT_SHA)" \
 	; fi
 
+revert_package_version:
+	# This is needed to avoid changes in the pyproject.toml file
+	if [ "$(DEBUG)" = "local" ] ; then \
+		$(POETRY) version 0.0.0  \
+	; fi
+
+build_and_publish_package: setup_package_version build revert_package_version publish
+
 update: clean
 	$(POETRY) update
 
@@ -42,12 +50,11 @@ test_unit: build
 static_checks: pep8 isort_check black_check
 
 build:
-	$(POETRY) version "${VERSION}.${BUILD_NUM}"
 	$(POETRY) build -f wheel -n
 
 publish:
-	$(POETRY) config repositories.bcd ${PYPI_URL}
-	$(POETRY) publish -r bcd -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}
+	$(POETRY) config repositories.bcd $(PYPI_URL)
+	$(POETRY) publish -r bcd -u $(PYPI_USERNAME) -p $(PYPI_PASSWORD)
 
 check: build
 	$(MAKE) DBNAME=":" RNUM="10000" check-each
@@ -97,6 +104,7 @@ doc: docclean
 docclean:
 	rm -rf doc
 
-.PHONY: install update clean hooks build publish setup_package_version \
+.PHONY: install update clean hooks build publish \
 	check check-each check-forever doc docclean \
-	pep8 isort_check black_check static_checks test_unit
+	pep8 isort_check black_check static_checks test_unit \
+	setup_package_version revert_package_version build_and_publish_package
