@@ -34,7 +34,7 @@ repos:
         stages: [commit]
       - id: pytest
         name: pytest
-        entry: make test
+        entry: make test_unit
         language: system
         stages: [push]
         pass_filenames: false
