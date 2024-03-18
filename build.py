@@ -3,8 +3,8 @@ import shutil
 
 from subprocess import PIPE, Popen
 
-from distutils.command.build_ext import build_ext
-from distutils.core import Distribution, Extension
+from setuptools import Distribution, Extension
+from setuptools.command.build_ext import build_ext
 
 
 def get_cmd_out(cmdargs):
@@ -52,11 +52,13 @@ def get_ext_modules():
 
 
 def build():
-    distribution = Distribution({
-        'ext_modules': get_ext_modules(),
-        'name': 'kyotocabinet',
-    })
-    distribution.package_dir = 'kyotocabinet'
+    distribution = Distribution(
+        {
+            'ext_modules': get_ext_modules(),
+            'name': 'kyotocabinet',
+        }
+    )
+    distribution.package_dir = {'kyotocabinet': 'kyotocabinet'}
 
     cmd = build_ext(distribution)
     cmd.ensure_finalized()

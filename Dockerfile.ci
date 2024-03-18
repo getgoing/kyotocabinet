@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm as basic
+FROM python:3.11-slim-bookworm as basic
 
 # Busting apt cache with VERSION change has good enough frequency and allows
 # manual busting when needed.
@@ -24,8 +24,8 @@ RUN curl -sSL https://install.python-poetry.org | python - --version 1.7.1 \
 COPY poetry.lock pyproject.toml ./
 
 # Install only dependencies
-RUN --mount=type=ssh poetry install -q --no-interaction --no-root && \
-    poetry cache clear -n --no-interaction pypi --all
+RUN --mount=type=ssh poetry install -q --no-interaction --no-root \
+    && poetry cache clear -n --no-interaction pypi --all
 
 COPY . .
 
@@ -39,5 +39,5 @@ RUN export VERSION=$VERSION \
     export DEBUG=$DEBUG \
     export GIT_COMMIT_SHA=$GIT_COMMIT_SHA
 
-RUN make setup_package_version && \
-    poetry install --only-root
+RUN make setup_package_version \
+    && poetry install --only-root
