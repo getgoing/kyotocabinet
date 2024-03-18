@@ -93,7 +93,6 @@ exclude = '(/snapshots/)'
 include = '(\.py$)'
 target-version = ['py39']
 skip-string-normalization = true
-safe = true
 
 [tool.poetry.build]
 generate-setup-file = false

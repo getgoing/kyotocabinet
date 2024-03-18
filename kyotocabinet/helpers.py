@@ -3,6 +3,7 @@
 kyotocabinet.helpers
 ====================
 """
+
 import os
 
 from collections.abc import MutableMapping
